@@ -9,10 +9,11 @@ export default {
     })
   },
   //请求添加或修改商品属性数据
-  getAddOrUpdate() {
+  getAddOrUpdate(data) {
     return request({
       url: `${api_name}/saveAttrInfo`,
-      method:'post'
+      method: 'post',
+      data
     })
   },
   //请求删除商品属性数据

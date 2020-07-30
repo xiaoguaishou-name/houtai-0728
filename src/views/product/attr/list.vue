@@ -55,7 +55,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-button type="primary">保存</el-button>
+        <el-button type="primary" :disabled="!attrForm.attrName" @click="addValueName">保存</el-button>
         <el-button @click="isShowList = true">取消</el-button>
       </div>
     </el-card>
@@ -131,6 +131,13 @@ export default {
         attrId:this.attrForm.id,
         valueName:''
       })
+    },
+    async addValueName(){
+      const result = await this.$API.attr.getAddOrUpdate(this.attrForm)
+      if(result.code === 200){
+        this.$message.success('添加成功')
+        this.isShowList = true
+      }
     }
   },
 };

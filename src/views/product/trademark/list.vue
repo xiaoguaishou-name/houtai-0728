@@ -26,7 +26,7 @@
     ></el-pagination>
 
     <el-dialog :title="`${form.id?'修改':'添加'}`" :visible.sync="isShowDialog">
-      <el-form :model="form" style="width:80%" :rules="rules">
+      <el-form :model="form" style="width:80%" :rules="rules" ref="form">
         <el-form-item label="品牌名称" :label-width="formLabelWidth" prop="tmName">
           <el-input v-model="form.tmName" autocomplete="off"></el-input>
         </el-form-item>
@@ -151,17 +151,24 @@ export default {
     },
     // 增加品牌
     async ShowAddTrademark(){
-      // 找参数
-      let trademark = this.form
-      // 发请求
-      const result = await this.$API.trademark.addOrUpdate(trademark)
-      if(result.code === 200){
-        this.$message.success(`${trademark.id?"修改":"添加"}品牌成功`)
-        this.getTrademarkList(trademark.id?this.page:1)
-        this.isShowDialog = false
-      }else{
-        this.$message.error(`${trademark.id?"修改":"添加"}品牌失败`)
-      }
+     this.$refs.form.validate(async (valid) => {
+        if (valid) {
+          // 1.收集参数
+          let trademark = this.form;
+          // 2.发请求
+          const result = await this.$API.trademark.addOrUpdate(trademark);
+          if (result.code === 200) {
+            this.$message.success(`${trademark.id ? "修改" : "添加"}品牌成功`);
+            this.getTrademarkList(trademark.id ? this.page : 1); //重新加载数据，默认添加的品牌在最后,回到第一页；如果是修改就停留在当前页
+            this.isShowDialog = false;
+          } else {
+            this.$message.info(`${trademark.id ? "修改" : "添加"}品牌失败`);
+          }
+        } else {
+          alert("验证失败");
+          return false;
+        }
+      });
     }
   },
 };
