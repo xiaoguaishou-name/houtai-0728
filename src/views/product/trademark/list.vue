@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-button type="primary" icon="el-icon-plus" @click="ShowDialog">添加</el-button>
-    <el-table :data="trademarkList" border stripe background style="width:100%;margin:20px">
+    <el-table :data="trademarkList" border stripe background style="width:100%;margin:20px 0">
       <el-table-column type="index" label="序号" width="80" align="center"></el-table-column>
       <el-table-column prop="tmName" label="品牌名称" width="width"></el-table-column>
       <el-table-column width="width" label="品牌LOGO">
@@ -25,12 +25,12 @@
       :total="total"
     ></el-pagination>
 
-    <el-dialog title="添加" :visible.sync="isShowDialog">
-      <el-form :model="form" style="width:80%">
-        <el-form-item label="品牌名称" :label-width="formLabelWidth">
+    <el-dialog :title="`${form.id?'修改':'添加'}`" :visible.sync="isShowDialog">
+      <el-form :model="form" style="width:80%" :rules="rules">
+        <el-form-item label="品牌名称" :label-width="formLabelWidth" prop="tmName">
           <el-input v-model="form.tmName" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="品牌LOGO" :label-width="formLabelWidth">
+        <el-form-item label="品牌LOGO" :label-width="formLabelWidth" prop="logoUrl">
           <el-upload
             class="avatar-uploader"
             action="/dev-api/admin/product/fileUpload"
@@ -67,7 +67,17 @@ export default {
         tmName: "",
         logoUrl: "",
       },
-    };
+
+       rules: {
+          tmName: [
+            { required: true, message: '请输入品牌名称', trigger: 'blur' },
+            { min: 2, max: 10, message: '输入字符长度在 2 到 10 个字符', trigger: 'blur' }
+          ],
+          logoUrl: [
+            { required: true, message: '请上传图片', trigger: 'change' }
+          ],
+      }
+    }
   },
   mounted() {
     this.getTrademarkList();
